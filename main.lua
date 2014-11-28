@@ -211,6 +211,16 @@ function events.COMBAT_LOG_EVENT_UNFILTERED(timestamp, event, hideCaster, source
     end
 end
 
+function events.PLAYER_REGEN_ENABLED()
+    -- If player goes out of combat, the bodyguard does too (presumably)
+    -- And if bodyguard goes OOC, they instantly heal to full
+    -- Return if the bodyguard is dead though, since a dead bodyguard doesn't
+    -- heal back.
+    if bodyguard.health <= 0 then return end
+    bodyguard.health = bodyguard.max_health
+    RunCallback("health", bodyguard.health, bodyguard.max_health)
+end
+
 frame:SetScript("OnEvent", function(f, e, ...)
     if events[e] then events[e](...) end
 end)
