@@ -77,8 +77,15 @@ local callbacks = {
     guid = {},
     name = {},
     level = {},
-    health = {}
+    health = {},
+    status = {}
 }
+
+local function RunCallback(cb_type, ...)
+    for func, enabled in pairs(callbacks[cb_type]) do
+        if enabled then pcall(func, lib, ...) end
+    end
+end
 
 local frame = CreateFrame("Frame")
 
@@ -117,12 +124,6 @@ local function UpdateFromUnit(unit)
     bodyguard.max_health = UnitHealthMax(unit)
     RunCallback("guid", bodyguard.last_known_guid)
     RunCallback("health", bodyguard.health, bodyguard.max_health)
-end
-
-local function RunCallback(cb_type, ...)
-    for func, enabled in pairs(callbacks[cb_type]) do
-        if enabled then pcall(func, lib, ...) end
-    end
 end
 
 function events.GARRISON_BUILDINGS_SWAPPED()
