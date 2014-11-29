@@ -243,21 +243,21 @@ function lib:Exists()
     return bodyguard.name and bodyguard.loaded_from_building
 end
 
---- Updates bodyguard data from garrison building API
+--- Updates bodyguard data from garrison building API.
 -- This is reliable and will always populate the bodyguard table with accurate information.
 -- Information available from garrison API is bodyguard name and level.
 function lib:UpdateFromBuilding()
     UpdateBodyguardFromBuildings()
 end
 
---- Gets a read-only copy of the bodyguard table
+--- Gets a read-only copy of the bodyguard table.
 -- @return A read-only table that maps its index to the bodyguard table in the library.
 function lib:GetInfo()
     return setmetatable({}, {__index = function(t, k) return bodyguard[k] end, __metatable = 'Forbidden'})
 end
 
 --- Gets the last known GUID of the bodyguard.
--- NOTE: This is not 100% reliable, GUID may change
+-- NOTE: This is not 100% reliable, GUID may change.
 -- @return The last known GUID string of the bodyguard.
 function lib:GetGUID()
     return bodyguard.last_known_guid
@@ -266,7 +266,7 @@ end
 --- Gets the last known status of the bodyguard.
 -- This can be any of the values defined in the lib.Status table
 -- Inactive: Bodyguard is not currently with the player.
--- Active: Bodyguard is with the player
+-- Active: Bodyguard is with the player.
 -- Unknown: Bodyguard status is not known or uncertain (this includes death).
 -- As with the GUID method, the bodyguard status is quite unreliable at this time.
 -- @return The last known status of the bodyguard.
@@ -286,7 +286,7 @@ function lib:GetLevel()
     return bodyguard.level
 end
 
---- Gets the bodyguard's health
+--- Gets the bodyguard's health.
 -- The value returned should be fairly accurate.
 -- @return Current (predicted) health of the player's bodyguard.
 function lib:GetHealth()
@@ -307,12 +307,14 @@ end
 
 --- Registers a function for a specific callback type.
 -- This can be used to listen for certain events like health updates from the library.
--- Currently, the following callbacks are available: guid, name, health, level, status
--- guid args: guid
--- name args: name
--- health args: health, max health
--- level args: level
--- status args: status
+-- Currently, the following callbacks are available: guid, name, health, level, status.
+-- <ul>
+-- <li>guid args: guid</li>
+-- <li>name args: name</li>
+-- <li>health args: health, max health</li>
+-- <li>level args: level</li>
+-- <li>status args: status</li>
+-- </ul>
 -- The first argument will always be a reference to the library table.
 -- @param cb_type Callback type to listen for.
 -- @param cb_func Function to call.
