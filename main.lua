@@ -52,8 +52,6 @@ local reputation_spells = {
 local barracks_ids = {[27] = true, [28] = true}
 
 --- Bodyguard status values.
--- @class table
--- @name lib.Status
 -- @field Inactive Bodyguard is not with the player (stationed at barracks).
 -- @field Active Bodyguard is with the player.
 -- @field Unknown Status of bodyguard is unknown (this includes death).
