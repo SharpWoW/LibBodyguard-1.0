@@ -5,5 +5,5 @@
 ## Version: @project-version@
 ## X-Category: Library
 
-LibStub.lua
+LibStub\LibStub.lua
 load.xml

@@ -51,6 +51,12 @@ local reputation_spells = {
 -- Valid barracks IDs, 27 = lvl 2 barracks, 28 = lvl 3 barracks
 local barracks_ids = {[27] = true, [28] = true}
 
+--- Bodyguard status values
+-- @class table
+-- @name lib.Status
+-- @field Inactive Bodyguard is not with the player (stationed at barracks)
+-- @field Active Bodyguard is with the player
+-- @field Unknown Status of bodyguard is unknown (this includes death)
 lib.Status = {
     Inactive = 0,
     Active = 1,
@@ -231,55 +237,94 @@ end
 
 -- Public API
 
+--- Gets a value indicating whether or not a bodyguard exists (is assigned to barracks).
+-- @return Boolean indicating whether a bodyguard is assigned to the barracks.
 function lib:Exists()
     return bodyguard.name and bodyguard.loaded_from_building
 end
 
+--- Updates bodyguard data from garrison building API
+-- This is reliable and will always populate the bodyguard table with accurate information.
+-- Information available from garrison API is bodyguard name and level.
 function lib:UpdateFromBuilding()
     UpdateBodyguardFromBuildings()
 end
 
+--- Gets a read-only copy of the bodyguard table
+-- @return A read-only table that maps its index to the bodyguard table in the library.
 function lib:GetInfo()
     return setmetatable({}, {__index = function(t, k) return bodyguard[k] end, __metatable = 'Forbidden'})
 end
 
+--- Gets the last known GUID of the bodyguard.
 -- NOTE: This is not 100% reliable, GUID may change
+-- @return The last known GUID string of the bodyguard.
 function lib:GetGUID()
     return bodyguard.last_known_guid
 end
 
+--- Gets the last known status of the bodyguard.
+-- This can be any of the values defined in the lib.Status table
+-- Inactive: Bodyguard is not currently with the player.
+-- Active: Bodyguard is with the player
+-- Unknown: Bodyguard status is not known or uncertain (this includes death).
+-- As with the GUID method, the bodyguard status is quite unreliable at this time.
+-- @return The last known status of the bodyguard.
 function lib:GetStatus()
     return bodyguard.status
 end
 
+--- Gets the name of the bodyguard.
+-- @return The bodyguard's name (follower name).
 function lib:GetName()
     return bodyguard.name
 end
 
+--- Gets the level of the bodyguard.
+-- @return The bodyguard's level (follower level).
 function lib:GetLevel()
     return bodyguard.level
 end
 
---- Returns bodyguard health
+--- Gets the bodyguard's health
+-- The value returned should be fairly accurate.
 -- @return Current (predicted) health of the player's bodyguard.
 function lib:GetHealth()
     return bodyguard.health
 end
 
+--- Gets the maximum health of the bodyguard.
+-- @return The bodyguard's maximum health.
 function lib:GetMaxHealth()
     return bodyguard.max_health
 end
 
+--- Gets a value indicating whether the bodyguard is alive.
+-- @return A boolean value indicating whether the bodyguard is currently alive.
 function lib:IsAlive()
     return self:GetHealth() > 0
 end
 
+--- Registers a function for a specific callback type.
+-- This can be used to listen for certain events like health updates from the library.
+-- Currently, the following callbacks are available: guid, name, health, level, status
+-- guid args: guid
+-- name args: name
+-- health args: health, max health
+-- level args: level
+-- status args: status
+-- The first argument will always be a reference to the library table.
+-- @param cb_type Callback type to listen for.
+-- @param cb_func Function to call.
 function lib:RegisterCallback(cb_type, cb_func)
     if not callbacks[cb_type] then error("Invalid callback type: " .. tostring(cb_type)) end
     if callbacks[cb_type][cb_func] then return end -- Silent fail if that callback func is already registered
     callbacks[cb_type][cb_func] = true
 end
 
+--- Unregisters a function from a specific callback type.
+-- @param cb_type Callback type to unregister from.
+-- @param cb_func The function to unregister (has to be the exact same function that was passed to the Register method).
 function lib:UnregisterCallback(cb_type, cb_func)
     if not callbacks[cb_type] then error("Invalid callback type: " .. tostring(cb_type)) end
     callbacks[cb_type][cb_func] = nil
