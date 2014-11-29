@@ -10,9 +10,7 @@ For now, only name, health and last known GUID are available.
 Usage
 -----
 
-TODO: Add LuaDoc to code.
-
-In the meantime, just examine the main.lua file, any public API methods are in the lib table.
+The public API methods have LuaDoc comments, the rest of the code has some stray comments here and there.
 
 To load library if you're using it embedded, specify the load.xml file in your TOC.
 
