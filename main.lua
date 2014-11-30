@@ -163,6 +163,11 @@ function events.UPDATE_MOUSEOVER_UNIT()
     UpdateFromUnit("mouseover")
 end
 
+function events.UNIT_HEALTH(unit)
+    if not bodyguard.name then return end
+    UpdateFromUnit(unit)
+end
+
 -- We listen to CLEU to find out when the bodyguard is damaged or healed
 function events.COMBAT_LOG_EVENT_UNFILTERED(timestamp, event, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, ...)
     -- First find out if the destination (damaged or healed) is the player's bodyguard
