@@ -68,7 +68,7 @@ local defeated_debuffs = {
     [173661] = true  -- Vivianne
 }
 
-local defeated_pattern = "^(%w%s)+ Defeated"
+local defeated_pattern = "^([%w%s]+) %w+"
 
 -- Get follower names for the defeated spells
 for id, _ in pairs(defeated_spells) do
@@ -215,22 +215,14 @@ function events.COMBAT_LOG_EVENT_UNFILTERED(timestamp, event, hideCaster, source
     -- First find out if the destination (damaged or healed) is the player's bodyguard
     if not bodyguard.name or (not sourceName and not destName) then return end
     local args = {...} -- Box the varargs
-    if event == "SPELL_CAST_SUCCESS" and sourceName == bodyguard.name then -- Check for the reputation check spell
+    if sourceName == bodyguard.name then
         local isBodyguard = band(sourceFlags, BODYGUARD_FLAGS) == BODYGUARD_FLAGS
         if not isBodyguard then return end
-        -- With a SPELL_* event, the first vararg is spell id
-        local spell_id = args[1]
-        if not reputation_spells[spell_id] then return end
-        bodyguard.last_known_guid = sourceGUID
         bodyguard.status = lib.Status.Active
+        bodyguard.last_known_guid = sourceGUID
         RunCallback("guid", bodyguard.last_known_guid)
         RunCallback("status", bodyguard.status)
-    elseif sourceName == bodyguard.name then
-        local isBodyguard = band(sourceFlags, BODYGUARD_FLAGS) == BODYGUARD_FLAGS
-        if not isBodyguard then return end
-        bodyguard.status = lib.Status.Active
-        RunCallback("status", bodyguard.status)
-    elseif destName == bodyguard.name then
+    elseif destName == bodyguard.name and bodyguard.status ~= lib.Status.Inactive then
         local isBodyguard = band(destFlags, BODYGUARD_FLAGS) == BODYGUARD_FLAGS
         if not isBodyguard then return end
         local prefix, suffix = event:match("^([A-Z_]+)_([A-Z]+)$")
@@ -300,22 +292,35 @@ function events.GOSSIP_CONFIRM(index, message, cost)
     bodyguard_confirm_showing = true
 end
 
+function events.GOSSIP_CONFIRM_CANCEL()
+    bodyguard_gossip_open = false
+    bodyguard_confirm_showing = false
+end
+
 function events.player.UNIT_AURA()
     for i = 1, 40 do
         local _, _, _, _, _, duration, expireTime, _, _, _, id = UnitDebuff("player", i)
         if not defeated_debuffs[id] then return end
         local name = defeated_debuffs[id]
-        if name ~= bodyguard.name then return end
-        -- The debuff means we can be certain the bodyguard is not with the player anymore
-        bodyguard.status = lib.Status.Inactive
-        bodyguard.health = 0
-        RunCallback("status", bodyguard.status)
-        RunCallback("health", bodyguard.health, bodyguard.max_health)
+        if name == bodyguard.name then
+            -- The debuff means we can be certain the bodyguard is not with the player anymore
+            bodyguard.status = lib.Status.Inactive
+            bodyguard.health = 0
+            RunCallback("status", bodyguard.status)
+            RunCallback("health", bodyguard.health, bodyguard.max_health)
+            return
+        end
     end
 end
 
 frame:SetScript("OnEvent", function(f, e, ...)
-    if events[e] then events[e](...) end
+    if events[e] then events[e](...) return end
+
+    for key, val in pairs(events) do
+        if type(val) == "table" then
+            if val[e] then val[e](...) return end
+        end
+    end
 end)
 
 for key, val in pairs(events) do
