@@ -292,11 +292,6 @@ function events.GOSSIP_CONFIRM(index, message, cost)
     bodyguard_confirm_showing = true
 end
 
-function events.GOSSIP_CONFIRM_CANCEL()
-    bodyguard_gossip_open = false
-    bodyguard_confirm_showing = false
-end
-
 function events.player.UNIT_AURA()
     for i = 1, 40 do
         local _, _, _, _, _, duration, expireTime, _, _, _, id = UnitDebuff("player", i)
