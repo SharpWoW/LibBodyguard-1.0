@@ -48,6 +48,46 @@ local reputation_spells = {
     [174661] = true, [174641] = true, [174648] = true, [174179] = true, [174227] = true
 }
 
+local defeated_spells = {
+    [173663] = true, -- Aeda Brightdawn
+    [173662] = true, -- Defender Illona
+    [173664] = true, -- Delvar Ironfist
+    [173977] = true, -- Leorajh
+    [173665] = true, -- Talonpriest Ishaal
+    [173656] = true, -- Tormmok
+    [173666] = true  -- Vivianne
+}
+
+local defeated_debuffs = {
+    [173660] = true, -- Aeda Brightdawn
+    [173657] = true, -- Defender Illona
+    [173658] = true, -- Delvar Ironfist
+    [173976] = true, -- Leorajh
+    [173659] = true, -- Talonpriest Ishaal
+    [173649] = true, -- Tormmok
+    [173661] = true  -- Vivianne
+}
+
+local defeated_pattern = "^(%w%s)+ Defeated"
+
+-- Get follower names for the defeated spells
+for id, _ in pairs(defeated_spells) do
+    local spellName = GetSpellInfo(id)
+    local name = spellName:match(defeated_pattern)
+    if name then
+        defeated_spells[id] = name
+    end
+end
+
+-- Do the same for debuffs
+for id, _ in pairs(defeated_debuffs) do
+    local spellName = GetSpellInfo(id)
+    local name = spellName:match(defeated_pattern)
+    if name then
+        defeated_debuffs[id] = name
+    end
+end
+
 -- Valid barracks IDs, 27 = lvl 2 barracks, 28 = lvl 3 barracks
 local barracks_ids = {[27] = true, [28] = true}
 
@@ -95,7 +135,9 @@ end
 
 local frame = CreateFrame("Frame")
 
-local events = {}
+local events = {
+    player = {}
+}
 
 local function UpdateFromBuildings()
     ResetBodyguard()
@@ -183,6 +225,11 @@ function events.COMBAT_LOG_EVENT_UNFILTERED(timestamp, event, hideCaster, source
         bodyguard.status = lib.Status.Active
         RunCallback("guid", bodyguard.last_known_guid)
         RunCallback("status", bodyguard.status)
+    elseif sourceName == bodyguard.name then
+        local isBodyguard = band(sourceFlags, BODYGUARD_FLAGS) == BODYGUARD_FLAGS
+        if not isBodyguard then return end
+        bodyguard.status = lib.Status.Active
+        RunCallback("status", bodyguard.status)
     elseif destName == bodyguard.name then
         local isBodyguard = band(destFlags, BODYGUARD_FLAGS) == BODYGUARD_FLAGS
         if not isBodyguard then return end
@@ -215,9 +262,12 @@ function events.COMBAT_LOG_EVENT_UNFILTERED(timestamp, event, hideCaster, source
             RunCallback("health", bodyguard.health, bodyguard.max_health)
             if bodyguard.health <= 0 then
                 bodyguard.health = 0
+                -- We have only predicted death, we can't be sure
                 bodyguard.status = lib.Status.Unknown
-                RunCallback("status", bodyguard.status)
+            else
+                bodyguard.status = lib.Status.Active
             end
+            RunCallback("status", bodyguard.status)
         end
     end
 end
@@ -232,12 +282,69 @@ function events.PLAYER_REGEN_ENABLED()
     RunCallback("health", bodyguard.health, bodyguard.max_health)
 end
 
+local bodyguard_gossip_open = false
+local bodyguard_confirm_showing = false
+
+function events.GOSSIP_SHOW()
+    if UnitName("target") ~= bodyguard.name then return end
+    bodyguard_gossip_open = true
+end
+
+function events.GOSSIP_CLOSED()
+    bodyguard_gossip_open = false
+    bodyguard_confirm_showing = false
+end
+
+function events.GOSSIP_CONFIRM(index, message, cost)
+    if not bodyguard_gossip_open or index ~= 1 or cost ~= 0 then return end
+    bodyguard_confirm_showing = true
+end
+
+function events.player.UNIT_AURA()
+    for i = 1, 40 do
+        local _, _, _, _, _, duration, expireTime, _, _, _, id = UnitDebuff("player", i)
+        if not defeated_debuffs[id] then return end
+        local name = defeated_debuffs[id]
+        if name ~= bodyguard.name then return end
+        -- The debuff means we can be certain the bodyguard is not with the player anymore
+        bodyguard.status = lib.Status.Inactive
+        bodyguard.health = 0
+        RunCallback("status", bodyguard.status)
+        RunCallback("health", bodyguard.health, bodyguard.max_health)
+    end
+end
+
 frame:SetScript("OnEvent", function(f, e, ...)
     if events[e] then events[e](...) end
 end)
 
-for k, _ in pairs(events) do
-    frame:RegisterEvent(k)
+for key, val in pairs(events) do
+    if key:match("^[A-Z0-9_]+$") then
+        frame:RegisterEvent(key)
+    else
+        for event, _ in pairs(events[key]) do
+            frame:RegisterUnitEvent(event, key)
+        end
+    end
+end
+
+-- Function hooks
+
+function lib:GOSSIP_CONFIRM_Hook(s, data)
+    if not bodyguard_confirm_showing then return end
+
+    bodyguard.status = lib.Status.Inactive
+    bodyguard.health = bodyguard.max_health
+    RunCallback("status", bodyguard.status)
+    RunCallback("health", bodyguard.health, bodyguard.max_health)
+end
+
+if not lib.GOSSIP_CONFIRM_Hooked then
+    hooksecurefunc(StaticPopupDialogs.GOSSIP_CONFIRM, "OnAccept", function(self, data)
+        lib:GOSSIP_CONFIRM_Hook(self, data)
+    end)
+
+    lib.GOSSIP_CONFIRM_Hooked = true
 end
 
 -- Public API
