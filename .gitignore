@@ -2,3 +2,6 @@
 LibStub
 
 LibBodyguard-1.0.sublime-workspace
+
+# Ignore generated documentation
+docs/
