@@ -359,7 +359,7 @@ end
 -- This is reliable and will always populate the bodyguard table with accurate information.
 -- Information available from garrison API is bodyguard name and level.
 function lib:UpdateFromBuilding()
-    UpdateBodyguardFromBuildings()
+    UpdateFromBuildings()
 end
 
 --- Gets a read-only copy of the bodyguard table.
