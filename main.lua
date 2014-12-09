@@ -21,7 +21,7 @@
 ]]
 
 local MAJOR = "LibBodyguard-1.0"
-local MINOR = 3
+local MINOR = 4
 
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
