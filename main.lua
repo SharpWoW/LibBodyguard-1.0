@@ -124,7 +124,9 @@ local callbacks = {
     name = {},
     level = {},
     health = {},
-    status = {}
+    status = {},
+    gossip_opened = {},
+    gossip_closed = {}
 }
 
 local function RunCallback(cb_type, ...)
@@ -280,9 +282,11 @@ local bodyguard_confirm_showing = false
 function events.GOSSIP_SHOW()
     if UnitName("target") ~= bodyguard.name then return end
     bodyguard_gossip_open = true
+    RunCallback("gossip_opened")
 end
 
 function events.GOSSIP_CLOSED()
+    if bodyguard_gossip_open then RunCallback("gossip_closed") end
     bodyguard_gossip_open = false
     bodyguard_confirm_showing = false
 end
