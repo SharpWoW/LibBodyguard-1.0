@@ -280,7 +280,7 @@ local bodyguard_gossip_open = false
 local bodyguard_confirm_showing = false
 
 function events.GOSSIP_SHOW()
-    if UnitName("target") ~= bodyguard.name then return end
+    if not lib:Exists() or UnitName("target") ~= bodyguard.name then return end
     bodyguard_gossip_open = true
     RunCallback("gossip_opened")
 end
