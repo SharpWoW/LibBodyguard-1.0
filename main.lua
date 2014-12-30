@@ -246,6 +246,9 @@ function events.COMBAT_LOG_EVENT_UNFILTERED(timestamp, event, hideCaster, source
             changed = true
         elseif suffix == "HEAL" then
             bodyguard.health = bodyguard.health + amount
+            if bodyguard.health >= bodyguard.max_health then
+                bodyguard.health = bodyguard.max_health
+            end
             changed = true
         elseif suffix == "INSTAKILL" then
             bodyguard.health = 0
@@ -253,7 +256,6 @@ function events.COMBAT_LOG_EVENT_UNFILTERED(timestamp, event, hideCaster, source
         end
 
         if changed then
-            RunCallback("health", bodyguard.health, bodyguard.max_health)
             if bodyguard.health <= 0 then
                 bodyguard.health = 0
                 -- We have only predicted death, we can't be sure
@@ -261,6 +263,7 @@ function events.COMBAT_LOG_EVENT_UNFILTERED(timestamp, event, hideCaster, source
             else
                 bodyguard.status = lib.Status.Active
             end
+            RunCallback("health", bodyguard.health, bodyguard.max_health)
             RunCallback("status", bodyguard.status)
         end
     end
