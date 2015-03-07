@@ -295,7 +295,7 @@ function events.GOSSIP_CLOSED()
 end
 
 function events.GOSSIP_CONFIRM(index, message, cost)
-    if not bodyguard_gossip_open or index ~= 1 or cost ~= 0 then return end
+    if not bodyguard_gossip_open or cost ~= 0 then return end
     bodyguard_confirm_showing = true
 end
 
