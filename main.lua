@@ -326,10 +326,10 @@ frame:SetScript("OnEvent", function(f, e, ...)
 end)
 
 for key, val in pairs(events) do
-    if key:match("^[A-Z0-9_]+$") then
+    if type(val) == "function" then
         frame:RegisterEvent(key)
-    else
-        for event, _ in pairs(events[key]) do
+    elseif type(val) == "table"
+        for event, _ in pairs(val) do
             frame:RegisterUnitEvent(event, key)
         end
     end
