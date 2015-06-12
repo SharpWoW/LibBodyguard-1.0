@@ -364,7 +364,7 @@ end)
 for key, val in pairs(events) do
     if type(val) == "function" then
         frame:RegisterEvent(key)
-    elseif type(val) == "table"
+    elseif type(val) == "table" then
         for event, _ in pairs(val) do
             frame:RegisterUnitEvent(event, key)
         end
