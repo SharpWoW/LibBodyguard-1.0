@@ -48,6 +48,36 @@ local reputation_spells = {
     [174661] = true, [174641] = true, [174648] = true, [174179] = true, [174227] = true
 }
 
+-- The various spells for maintaining bodyguards
+local maintain_spells = {
+    [173636] = true, -- Aeda Brightdawn
+    [175950] = true, -- Aeda Brightdawn
+    [173639] = true, -- Defender Illona
+    [175945] = true, -- Defender Illona
+    [173638] = true, -- Delvar Ironfist
+    [175948] = true, -- Delvar Ironfist
+    [173995] = true, -- Leorajh
+    [173637] = true, -- Talonpriest Ishaal
+    [173450] = true, -- Tormmok
+    [173635] = true, -- Vivianne
+    [175952] = true  -- Vivianne
+}
+
+-- The various spells for summoning bodyguards
+local summon_spells = {
+    [173631] = true, -- Aeda Brightdawn
+    [175949] = true, -- Aeda Brightdawn
+    [173634] = true, -- Defender Illona
+    [175943] = true, -- Defender Illona
+    [173633] = true, -- Delvar Ironfist
+    [175947] = true, -- Delvar Ironfist
+    [173993] = true, -- Leorajh
+    [173632] = true, -- Talonpriest Ishaal
+    [173449] = true, -- Tormmok
+    [173630] = true, -- Vivianne
+    [175951] = true  -- Vivianne
+}
+
 local defeated_spells = {
     [173663] = true, -- Aeda Brightdawn
     [173662] = true, -- Defender Illona
@@ -210,6 +240,12 @@ end
 function events.UNIT_HEALTH(unit)
     if not bodyguard.name then return end
     UpdateFromUnit(unit)
+end
+
+function events.player.UNIT_SPELLCAST_SUCCEEDED(unit, name, rank, lineId, id)
+    if not summon_spells[id] then return end
+    bodyguard.status = lib.Status.Active
+    RunCallback("status", bodyguard.status)
 end
 
 -- We listen to CLEU to find out when the bodyguard is damaged or healed
