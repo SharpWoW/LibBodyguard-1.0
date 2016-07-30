@@ -174,7 +174,7 @@ local events = {
 local function UpdateFromBuildings()
     ResetBodyguard()
     bodyguard.loaded_from_building = true
-    local buildings = C_Garrison.GetBuildings()
+    local buildings = C_Garrison.GetBuildings(LE_GARRISON_TYPE_6_0)
     for i = 1, #buildings do
         local building = buildings[i]
         local building_id = building.buildingID
