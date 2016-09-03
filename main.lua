@@ -126,6 +126,43 @@ local LEGION_SPELLS = {
 
 local DEFEATED_PATTERN = "^([%w%s]+) %w+"
 
+-- Bodyguards in WoD and Legion have some differing behaviour,
+-- so we need to do some things different depending on what kind of
+-- bodyguard we're dealing with.
+local MODE_WOD = 0
+local MODE_LEGION = 1
+
+local mode = nil
+
+-- A list of zones and whether they are WoD or Legion zones.
+local ZONES = {
+    [962] = MODE_WOD, -- Draenor
+    [941] = MODE_WOD, -- Frostfire Ridge
+    [976] = MODE_WOD, -- Frostwall
+    [949] = MODE_WOD, -- Gorgrond
+    [971] = MODE_WOD, -- Lunarfall
+    [950] = MODE_WOD, -- Nagrand
+    [947] = MODE_WOD, -- Shadowmoon Valley
+    [948] = MODE_WOD, -- Spires of Arak
+    [946] = MODE_WOD, -- Talador
+    [945] = MODE_WOD, -- Tanaan Jungle
+    [970] = MODE_WOD, -- Tanaan Jungle - Assault on the Dark Portal
+    [1007] = MODE_LEGION, -- Broken Isles
+    [1015] = MODE_LEGION, -- Aszuna
+    [1021] = MODE_LEGION, -- Broken Shore
+    [1014] = MODE_LEGION, -- Dalaran
+    [1098] = MODE_LEGION, -- Eye of Azshara
+    [1024] = MODE_LEGION, -- Highmountain
+    [1017] = MODE_LEGION, -- Stormheim
+    [1033] = MODE_LEGION, -- Suramar
+    [1018] = MODE_LEGION  -- Val'sharah
+}
+
+local function UpdateMode()
+    SetMapToCurrentZone()
+    mode = ZONES[GetCurrentMapAreaID()]
+end
+
 -- Get follower names for the defeated spells
 for id, _ in pairs(defeated_spells) do
     local spellName = GetSpellInfo(id)
@@ -339,6 +376,14 @@ function events.PLAYER_REGEN_ENABLED()
     if bodyguard.health <= 0 then return end
     bodyguard.health = bodyguard.max_health
     RunCallback("health", bodyguard.health, bodyguard.max_health)
+end
+
+function events.PLAYER_ENTERING_WORLD()
+    UpdateMode()
+end
+
+function events.ZONE_CHANGED_NEW_AREA()
+    UpdateMode()
 end
 
 local bodyguard_gossip_open = false
