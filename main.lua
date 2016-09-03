@@ -98,6 +98,32 @@ local defeated_debuffs = {
     [173661] = true  -- Vivianne
 }
 
+-- List of bodyguard spells in legion.
+-- These are the "Combat Ally" ability listed for the follower,
+-- and returned in the "zoneSupportSpellID" in the FollowerInfo.
+local LEGION_SPELLS = {
+    [219995] = true, -- Addie Fizzlebog
+    [222820] = true, -- Akama
+    [221713] = true, -- Arator the Redeemer
+    [220125] = true, -- Archmage Modera
+    [222964] = true, -- Belath Dawnblade
+    [218603] = true, -- Broll Bearmantle
+    [211945] = true, -- Chen Stormstout
+    [222827] = true, -- Dvalen Ironrune
+    [222365] = true, -- Koltira Deathweaver
+    [220212] = true, -- Millhouse Manastorm
+    [212145] = true, -- The Monkey King
+    [217849] = true, -- Rehgar Earthfury
+    [220814] = true, -- Rexxar
+    [216090] = true, -- Ritssyn Flamescowl
+    [222842] = true, -- Shade of Akama
+    [222080] = true, -- Sol
+    [218154] = true, -- Stormcaller Mylra
+    [221496] = true, -- Vanessa VanCleef
+    [221625] = true, -- Vindicator Boros
+    [222070] = true, -- Zabra Hexx
+}
+
 local DEFEATED_PATTERN = "^([%w%s]+) %w+"
 
 -- Get follower names for the defeated spells
