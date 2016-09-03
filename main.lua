@@ -373,7 +373,10 @@ function events.PLAYER_REGEN_ENABLED()
     -- And if bodyguard goes OOC, they instantly heal to full
     -- Return if the bodyguard is dead though, since a dead bodyguard doesn't
     -- heal back.
-    if bodyguard.health <= 0 then return end
+    -- ---
+    -- In Legion, bodyguards do not heal up instantly, they behave like
+    -- players and will slowly regen their health normally.
+    if bodyguard.health <= 0 or mode == MODE_LEGION then return end
     bodyguard.health = bodyguard.max_health
     RunCallback("health", bodyguard.health, bodyguard.max_health)
 end
