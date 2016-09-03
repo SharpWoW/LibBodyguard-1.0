@@ -234,9 +234,7 @@ local events = {
     player = {}
 }
 
-local function UpdateFromBuildings()
-    ResetBodyguard()
-    bodyguard.loaded_from_building = true
+local function UpdateFromGarrison()
     local buildings = C_Garrison.GetBuildings(LE_GARRISON_TYPE_6_0)
     for i = 1, #buildings do
         local building = buildings[i]
@@ -256,6 +254,20 @@ local function UpdateFromBuildings()
             RunCallback("level", bodyguard.level)
             break
         end
+    end
+end
+
+local function UpdateFromClassHall()
+end
+
+local function UpdateFromBuildings()
+    ResetBodyguard()
+    bodyguard.loaded_from_building = true
+
+    if mode == MODE_WOD then
+        UpdateFromGarrison()
+    elseif mode == MODE_LEGION then
+        UpdateFromClassHall()
     end
 end
 
