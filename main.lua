@@ -98,12 +98,12 @@ local defeated_debuffs = {
     [173661] = true  -- Vivianne
 }
 
-local defeated_pattern = "^([%w%s]+) %w+"
+local DEFEATED_PATTERN = "^([%w%s]+) %w+"
 
 -- Get follower names for the defeated spells
 for id, _ in pairs(defeated_spells) do
     local spellName = GetSpellInfo(id)
-    local name = spellName:match(defeated_pattern)
+    local name = spellName:match(DEFEATED_PATTERN)
     if name then
         defeated_spells[id] = name
     end
@@ -112,7 +112,7 @@ end
 -- Do the same for debuffs
 for id, _ in pairs(defeated_debuffs) do
     local spellName = GetSpellInfo(id)
-    local name = spellName:match(defeated_pattern)
+    local name = spellName:match(DEFEATED_PATTERN)
     if name then
         defeated_debuffs[id] = name
     end
