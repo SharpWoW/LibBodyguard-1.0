@@ -315,7 +315,6 @@ end
 function events.COMBAT_LOG_EVENT_UNFILTERED(timestamp, event, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, ...)
     -- First find out if the destination (damaged or healed) is the player's bodyguard
     if not bodyguard.name or (not sourceName and not destName) then return end
-    local args = {...} -- Box the varargs
     if sourceName == bodyguard.name then
         local isBodyguard = band(sourceFlags, BODYGUARD_FLAGS) == BODYGUARD_FLAGS
         if not isBodyguard then return end
@@ -336,7 +335,7 @@ function events.COMBAT_LOG_EVENT_UNFILTERED(timestamp, event, hideCaster, source
             amount_idx = 2
         end
 
-        local amount = args[amount_idx]
+        local amount = ({...})[amount_idx]
 
         local changed = false
 
