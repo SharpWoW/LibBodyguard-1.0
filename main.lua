@@ -121,7 +121,7 @@ local LEGION_SPELLS = {
     [218154] = true, -- Stormcaller Mylra
     [221496] = true, -- Vanessa VanCleef
     [221625] = true, -- Vindicator Boros
-    [222070] = true, -- Zabra Hexx
+    [222070] = true  -- Zabra Hexx
 }
 
 local LEGION_BODYGUARDS = {
