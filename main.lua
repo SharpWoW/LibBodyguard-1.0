@@ -98,12 +98,97 @@ local defeated_debuffs = {
     [173661] = true  -- Vivianne
 }
 
-local defeated_pattern = "^([%w%s]+) %w+"
+-- List of bodyguard spells in legion.
+-- These are the "Combat Ally" ability listed for the follower,
+-- and returned in the "zoneSupportSpellID" in the FollowerInfo.
+local LEGION_SPELLS = {
+    [219995] = true, -- Addie Fizzlebog
+    [222820] = true, -- Akama
+    [221713] = true, -- Arator the Redeemer
+    [220125] = true, -- Archmage Modera
+    [222964] = true, -- Belath Dawnblade
+    [218603] = true, -- Broll Bearmantle
+    [211945] = true, -- Chen Stormstout
+    [222827] = true, -- Dvalen Ironrune
+    [222365] = true, -- Koltira Deathweaver
+    [220212] = true, -- Millhouse Manastorm
+    [212145] = true, -- The Monkey King
+    [217849] = true, -- Rehgar Earthfury
+    [220814] = true, -- Rexxar
+    [216090] = true, -- Ritssyn Flamescowl
+    [222842] = true, -- Shade of Akama
+    [222080] = true, -- Sol
+    [218154] = true, -- Stormcaller Mylra
+    [221496] = true, -- Vanessa VanCleef
+    [221625] = true, -- Vindicator Boros
+    [222070] = true  -- Zabra Hexx
+}
+
+local LEGION_BODYGUARDS = {
+    [746] = true, -- Addie Fizzlebog
+    [718] = true, -- Akama
+    [758] = true, -- Arator the Redeemer
+    [717] = true, -- Archmage Modera
+    [594] = true, -- Belath Dawnblade
+    [641] = true, -- Broll Bearmantle
+    [596] = true, -- Chen Stormstout
+    [714] = true, -- Dvalen Ironrune
+    [599] = true, -- Koltira Deathweaver
+    [723] = true, -- Millhouse Manastorm
+    [602] = true, -- The Monkey King
+    [612] = true, -- Rehgar Earthfury
+    [743] = true, -- Rexxar
+    [589] = true, -- Ritssyn Flamescowl
+    [719] = true, -- Shade of Akama
+    [872] = true, -- Sol
+    [608] = true, -- Stormcaller Mylra
+    [591] = true, -- Vanessa VanCleef
+    [479] = true, -- Vindicator Boros
+    [870] = true  -- Zabra Hexx
+}
+
+local DEFEATED_PATTERN = "^([%w%s]+) %w+"
+
+-- Bodyguards in WoD and Legion have some differing behaviour,
+-- so we need to do some things different depending on what kind of
+-- bodyguard we're dealing with.
+local MODE_WOD = 0
+local MODE_LEGION = 1
+
+local mode = nil
+
+-- A list of zones and whether they are WoD or Legion zones.
+local ZONES = {
+    [962] = MODE_WOD, -- Draenor
+    [941] = MODE_WOD, -- Frostfire Ridge
+    [976] = MODE_WOD, -- Frostwall
+    [949] = MODE_WOD, -- Gorgrond
+    [971] = MODE_WOD, -- Lunarfall
+    [950] = MODE_WOD, -- Nagrand
+    [947] = MODE_WOD, -- Shadowmoon Valley
+    [948] = MODE_WOD, -- Spires of Arak
+    [946] = MODE_WOD, -- Talador
+    [945] = MODE_WOD, -- Tanaan Jungle
+    [970] = MODE_WOD, -- Tanaan Jungle - Assault on the Dark Portal
+    [1007] = MODE_LEGION, -- Broken Isles
+    [1015] = MODE_LEGION, -- Aszuna
+    [1021] = MODE_LEGION, -- Broken Shore
+    [1098] = MODE_LEGION, -- Eye of Azshara
+    [1024] = MODE_LEGION, -- Highmountain
+    [1017] = MODE_LEGION, -- Stormheim
+    [1033] = MODE_LEGION, -- Suramar
+    [1018] = MODE_LEGION  -- Val'sharah
+}
+
+local function UpdateMode()
+    SetMapToCurrentZone()
+    mode = ZONES[GetCurrentMapAreaID()]
+end
 
 -- Get follower names for the defeated spells
 for id, _ in pairs(defeated_spells) do
     local spellName = GetSpellInfo(id)
-    local name = spellName:match(defeated_pattern)
+    local name = spellName:match(DEFEATED_PATTERN)
     if name then
         defeated_spells[id] = name
     end
@@ -112,7 +197,7 @@ end
 -- Do the same for debuffs
 for id, _ in pairs(defeated_debuffs) do
     local spellName = GetSpellInfo(id)
-    local name = spellName:match(defeated_pattern)
+    local name = spellName:match(DEFEATED_PATTERN)
     if name then
         defeated_debuffs[id] = name
     end
@@ -171,9 +256,7 @@ local events = {
     player = {}
 }
 
-local function UpdateFromBuildings()
-    ResetBodyguard()
-    bodyguard.loaded_from_building = true
+local function UpdateFromGarrison()
     local buildings = C_Garrison.GetBuildings(LE_GARRISON_TYPE_6_0)
     for i = 1, #buildings do
         local building = buildings[i]
@@ -188,11 +271,50 @@ local function UpdateFromBuildings()
             end
             bodyguard.name = name
             bodyguard.level = level
-            bodyguard.follower_id = type(garrFollowerID) == "string" and tonumber(garrFollowerID, 16) or garrFollowerID
+            bodyguard.follower_id = garrFollowerID
             RunCallback("name", bodyguard.name)
             RunCallback("level", bodyguard.level)
             break
         end
+    end
+end
+
+local function UpdateFromClassHall()
+    ResetBodyguard()
+    bodyguard.loaded_from_building = true
+    local followers = C_Garrison.GetFollowers(LE_FOLLOWER_TYPE_GARRISON_7_0)
+
+    local follower
+
+    for _, f in pairs(followers) do
+        if LEGION_BODYGUARDS[f.garrFollowerID] or LEGION_SPELLS[f.zoneSupportSpellID] then
+            follower = f
+            break
+        end
+    end
+
+    if not follower then return end
+
+    local status = C_Garrison.GetFollowerStatus(follower.followerID)
+
+    -- TODO: Check if this is localized
+    if status ~= "Combat Ally" then return end
+
+    bodyguard.name = follower.name
+    bodyguard.level = follower.level
+    bodyguard.follower_id = follower.followerID
+    RunCallback("name", bodyguard.name)
+    RunCallback("level", bodyguard.level)
+end
+
+local function UpdateFromBuildings()
+    ResetBodyguard()
+    bodyguard.loaded_from_building = true
+
+    if mode == MODE_WOD then
+        UpdateFromGarrison()
+    elseif mode == MODE_LEGION then
+        UpdateFromClassHall()
     end
 end
 
@@ -252,7 +374,6 @@ end
 function events.COMBAT_LOG_EVENT_UNFILTERED(timestamp, event, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, ...)
     -- First find out if the destination (damaged or healed) is the player's bodyguard
     if not bodyguard.name or (not sourceName and not destName) then return end
-    local args = {...} -- Box the varargs
     if sourceName == bodyguard.name then
         local isBodyguard = band(sourceFlags, BODYGUARD_FLAGS) == BODYGUARD_FLAGS
         if not isBodyguard then return end
@@ -273,7 +394,7 @@ function events.COMBAT_LOG_EVENT_UNFILTERED(timestamp, event, hideCaster, source
             amount_idx = 2
         end
 
-        local amount = args[amount_idx]
+        local amount = ({...})[amount_idx]
 
         local changed = false
 
@@ -310,9 +431,20 @@ function events.PLAYER_REGEN_ENABLED()
     -- And if bodyguard goes OOC, they instantly heal to full
     -- Return if the bodyguard is dead though, since a dead bodyguard doesn't
     -- heal back.
-    if bodyguard.health <= 0 then return end
+    -- ---
+    -- In Legion, bodyguards do not heal up instantly, they behave like
+    -- players and will slowly regen their health normally.
+    if bodyguard.health <= 0 or mode == MODE_LEGION then return end
     bodyguard.health = bodyguard.max_health
     RunCallback("health", bodyguard.health, bodyguard.max_health)
+end
+
+function events.PLAYER_ENTERING_WORLD()
+    UpdateMode()
+end
+
+function events.ZONE_CHANGED_NEW_AREA()
+    UpdateMode()
 end
 
 local bodyguard_gossip_open = false
