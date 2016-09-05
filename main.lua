@@ -271,7 +271,7 @@ local function UpdateFromGarrison()
             end
             bodyguard.name = name
             bodyguard.level = level
-            bodyguard.follower_id = type(garrFollowerID) == "string" and tonumber(garrFollowerID, 16) or garrFollowerID
+            bodyguard.follower_id = garrFollowerID
             RunCallback("name", bodyguard.name)
             RunCallback("level", bodyguard.level)
             break
