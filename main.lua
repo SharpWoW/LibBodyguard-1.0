@@ -280,8 +280,6 @@ local function UpdateFromGarrison()
 end
 
 local function UpdateFromClassHall()
-    ResetBodyguard()
-    bodyguard.loaded_from_building = true
     local followers = C_Garrison.GetFollowers(LE_FOLLOWER_TYPE_GARRISON_7_0)
 
     local follower
@@ -293,12 +291,20 @@ local function UpdateFromClassHall()
         end
     end
 
-    if not follower then return end
+    if not follower then
+        bodyguard.status = lib.Status.Inactive
+        RunCallback("status", bodyguard.status)
+        return
+    end
 
     local status = C_Garrison.GetFollowerStatus(follower.followerID)
 
     -- TODO: Check if this is localized
-    if status ~= "Combat Ally" then return end
+    if status ~= "Combat Ally" then
+        bodyguard.status = lib.Status.Inactive
+        RunCallback("status", bodyguard.status)
+        return
+    end
 
     bodyguard.name = follower.name
     bodyguard.level = follower.level
