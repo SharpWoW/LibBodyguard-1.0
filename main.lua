@@ -299,8 +299,10 @@ local function UpdateFromClassHall()
 
     local status = C_Garrison.GetFollowerStatus(follower.followerID)
 
-    -- TODO: Check if this is localized
-    if status ~= "Combat Ally" then
+    -- Check if status is "Combat Ally"
+    -- ORDER_HALL_ZONE_SUPPORT
+    -- GARRISON_FOLLOWER_COMBAT_ALLY
+    if status ~= ORDER_HALL_ZONE_SUPPORT then
         bodyguard.status = lib.Status.Inactive
         RunCallback("status", bodyguard.status)
         return
