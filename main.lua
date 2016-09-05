@@ -280,8 +280,6 @@ local function UpdateFromGarrison()
 end
 
 local function UpdateFromClassHall()
-    ResetBodyguard()
-    bodyguard.loaded_from_building = true
     local followers = C_Garrison.GetFollowers(LE_FOLLOWER_TYPE_GARRISON_7_0)
 
     local follower
