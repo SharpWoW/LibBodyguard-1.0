@@ -124,6 +124,29 @@ local LEGION_SPELLS = {
     [222070] = true, -- Zabra Hexx
 }
 
+local LEGION_BODYGUARDS = {
+    [746] = true, -- Addie Fizzlebog
+    [718] = true, -- Akama
+    [758] = true, -- Arator the Redeemer
+    [717] = true, -- Archmage Modera
+    [594] = true, -- Belath Dawnblade
+    [641] = true, -- Broll Bearmantle
+    [596] = true, -- Chen Stormstout
+    [714] = true, -- Dvalen Ironrune
+    [599] = true, -- Koltira Deathweaver
+    [723] = true, -- Millhouse Manastorm
+    [602] = true, -- The Monkey King
+    [612] = true, -- Rehgar Earthfury
+    [743] = true, -- Rexxar
+    [589] = true, -- Ritssyn Flamescowl
+    [719] = true, -- Shade of Akama
+    [872] = true, -- Sol
+    [608] = true, -- Stormcaller Mylra
+    [591] = true, -- Vanessa VanCleef
+    [479] = true, -- Vindicator Boros
+    [870] = true  -- Zabra Hexx
+}
+
 local DEFEATED_PATTERN = "^([%w%s]+) %w+"
 
 -- Bodyguards in WoD and Legion have some differing behaviour,
