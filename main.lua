@@ -173,7 +173,6 @@ local ZONES = {
     [1007] = MODE_LEGION, -- Broken Isles
     [1015] = MODE_LEGION, -- Aszuna
     [1021] = MODE_LEGION, -- Broken Shore
-    [1014] = MODE_LEGION, -- Dalaran
     [1098] = MODE_LEGION, -- Eye of Azshara
     [1024] = MODE_LEGION, -- Highmountain
     [1017] = MODE_LEGION, -- Stormheim
