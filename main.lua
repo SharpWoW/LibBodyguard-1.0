@@ -280,6 +280,31 @@ local function UpdateFromGarrison()
 end
 
 local function UpdateFromClassHall()
+    ResetBodyguard()
+    bodyguard.loaded_from_building = true
+    local followers = C_Garrison.GetFollowers(LE_FOLLOWER_TYPE_GARRISON_7_0)
+
+    local follower
+
+    for _, f in pairs(followers) do
+        if LEGION_BODYGUARDS[f.garrFollowerID] or LEGION_SPELLS[f.zoneSupportSpellID] then
+            follower = f
+            break
+        end
+    end
+
+    if not follower then return end
+
+    local status = C_Garrison.GetFollowerStatus(follower.followerID)
+
+    -- TODO: Check if this is localized
+    if status ~= "Combat Ally" then return end
+
+    bodyguard.name = follower.name
+    bodyguard.level = follower.level
+    bodyguard.follower_id = follower.followerID
+    RunCallback("name", bodyguard.name)
+    RunCallback("level", bodyguard.level)
 end
 
 local function UpdateFromBuildings()
