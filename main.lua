@@ -157,32 +157,14 @@ local MODE_LEGION = 1
 
 local mode = nil
 
--- A list of zones and whether they are WoD or Legion zones.
-local ZONES = {
-    [962] = MODE_WOD, -- Draenor
-    [941] = MODE_WOD, -- Frostfire Ridge
-    [976] = MODE_WOD, -- Frostwall
-    [949] = MODE_WOD, -- Gorgrond
-    [971] = MODE_WOD, -- Lunarfall
-    [950] = MODE_WOD, -- Nagrand
-    [947] = MODE_WOD, -- Shadowmoon Valley
-    [948] = MODE_WOD, -- Spires of Arak
-    [946] = MODE_WOD, -- Talador
-    [945] = MODE_WOD, -- Tanaan Jungle
-    [970] = MODE_WOD, -- Tanaan Jungle - Assault on the Dark Portal
-    [1007] = MODE_LEGION, -- Broken Isles
-    [1015] = MODE_LEGION, -- Aszuna
-    [1021] = MODE_LEGION, -- Broken Shore
-    [1098] = MODE_LEGION, -- Eye of Azshara
-    [1024] = MODE_LEGION, -- Highmountain
-    [1017] = MODE_LEGION, -- Stormheim
-    [1033] = MODE_LEGION, -- Suramar
-    [1018] = MODE_LEGION  -- Val'sharah
+local CONTINENTS = {
+    [7] = MODE_WOD,
+    [8] = MODE_LEGION
 }
 
 local function UpdateMode()
     SetMapToCurrentZone()
-    mode = ZONES[GetCurrentMapAreaID()]
+    mode = CONTINENTS[GetCurrentMapContinent()]
 end
 
 -- Get follower names for the defeated spells
