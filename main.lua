@@ -350,7 +350,7 @@ function events.UPDATE_MOUSEOVER_UNIT()
 end
 
 function events.UNIT_HEALTH(unit)
-    if not bodyguard.name then return end
+    if not unit or not bodyguard.name then return end
     UpdateFromUnit(unit)
 end
 
