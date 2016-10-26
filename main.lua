@@ -266,10 +266,12 @@ local function UpdateFromClassHall()
 
     local follower
 
-    for _, f in pairs(followers) do
-        if LEGION_BODYGUARDS[f.garrFollowerID] or LEGION_SPELLS[f.zoneSupportSpellID] then
-            follower = f
-            break
+    if followers then
+        for _, f in pairs(followers) do
+            if LEGION_BODYGUARDS[f.garrFollowerID] or LEGION_SPELLS[f.zoneSupportSpellID] then
+                follower = f
+                break
+            end
         end
     end
 
