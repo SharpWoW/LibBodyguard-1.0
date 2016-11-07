@@ -269,8 +269,14 @@ local function UpdateFromClassHall()
     if followers then
         for _, f in pairs(followers) do
             if LEGION_BODYGUARDS[f.garrFollowerID] or LEGION_SPELLS[f.zoneSupportSpellID] then
-                follower = f
-                break
+                local status = C_Garrison.GetFollowerStatus(f.followerID)
+                -- Check if status is "Combat Ally"
+                -- ORDER_HALL_ZONE_SUPPORT
+                -- GARRISON_FOLLOWER_COMBAT_ALLY
+                if status == ORDER_HALL_ZONE_SUPPORT then
+                    follower = f
+                    break
+                end
             end
         end
     end
@@ -281,22 +287,13 @@ local function UpdateFromClassHall()
         return
     end
 
-    local status = C_Garrison.GetFollowerStatus(follower.followerID)
-
-    -- Check if status is "Combat Ally"
-    -- ORDER_HALL_ZONE_SUPPORT
-    -- GARRISON_FOLLOWER_COMBAT_ALLY
-    if status ~= ORDER_HALL_ZONE_SUPPORT then
-        bodyguard.status = lib.Status.Inactive
-        RunCallback("status", bodyguard.status)
-        return
-    end
-
     bodyguard.name = follower.name
     bodyguard.level = follower.level
     bodyguard.follower_id = follower.followerID
+    bodyguard.status = lib.Status.Active
     RunCallback("name", bodyguard.name)
     RunCallback("level", bodyguard.level)
+    RunCallback("status", bodyguard.status)
 end
 
 local function UpdateFromBuildings()
