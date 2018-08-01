@@ -163,7 +163,10 @@ local CONTINENTS = {
 }
 
 local function GetCurrentMapContinent()
-    return MapUtil.GetMapParentInfo(C_Map.GetBestMapForUnit("player"), Enum.UIMapType.Continent).mapID
+    local currentMapId = C_Map.GetBestMapForUnit("player")
+    if currentMapId == nil then return 0 end
+    local continent = MapUtil.GetMapParentInfo(currentMapId, Enum.UIMapType.Continent).mapID
+    return continent
 end
 
 local function UpdateMode()
@@ -352,7 +355,7 @@ function events.UNIT_HEALTH(unit)
     UpdateFromUnit(unit)
 end
 
-function events.player.UNIT_SPELLCAST_SUCCEEDED(unit, name, rank, lineId, id)
+function events.player.UNIT_SPELLCAST_SUCCEEDED(unit, name, id)
     if not summon_spells[id] then return end
     bodyguard.status = lib.Status.Active
     RunCallback("status", bodyguard.status)
