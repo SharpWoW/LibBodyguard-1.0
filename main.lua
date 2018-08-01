@@ -158,12 +158,15 @@ local MODE_LEGION = 1
 local mode = nil
 
 local CONTINENTS = {
-    [7] = MODE_WOD,
-    [8] = MODE_LEGION
+    [572] = MODE_WOD,
+    [619] = MODE_LEGION
 }
 
+local function GetCurrentMapContinent()
+    return MapUtil.GetMapParentInfo(C_Map.GetBestMapForUnit("player"), Enum.UIMapType.Continent).mapID
+end
+
 local function UpdateMode()
-    SetMapToCurrentZone()
     mode = CONTINENTS[GetCurrentMapContinent()]
 end
 
@@ -317,10 +320,6 @@ local function UpdateFromUnit(unit)
     RunCallback("health", bodyguard.health, bodyguard.max_health)
 end
 
-function events.GARRISON_BUILDINGS_SWAPPED()
-    UpdateFromBuildings()
-end
-
 function events.GARRISON_BUILDING_ACTIVATED()
     UpdateFromBuildings()
 end
@@ -359,8 +358,14 @@ function events.player.UNIT_SPELLCAST_SUCCEEDED(unit, name, rank, lineId, id)
     RunCallback("status", bodyguard.status)
 end
 
+local CombatLogGetCurrentEventInfo = CombatLogGetCurrentEventInfo
+local function ParseCleuArgs(timestamp, event, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, ...)
+    return timestamp, event, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, {...}
+end
+
 -- We listen to CLEU to find out when the bodyguard is damaged or healed
-function events.COMBAT_LOG_EVENT_UNFILTERED(timestamp, event, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, ...)
+function events.COMBAT_LOG_EVENT_UNFILTERED()
+    local timestamp, event, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, additional = ParseCleuArgs(CombatLogGetCurrentEventInfo())
     -- First find out if the destination (damaged or healed) is the player's bodyguard
     if not bodyguard.name or (not sourceName and not destName) then return end
     if sourceName == bodyguard.name then
@@ -383,7 +388,7 @@ function events.COMBAT_LOG_EVENT_UNFILTERED(timestamp, event, hideCaster, source
             amount_idx = 2
         end
 
-        local amount = ({...})[amount_idx]
+        local amount = additional[amount_idx]
 
         local changed = false
 
