@@ -1,7 +1,0 @@
-# Ignore libraries that are pulled in with Curse packager
-LibStub
-
-LibBodyguard-1.0.sublime-workspace
-
-# Ignore generated documentation
-docs/

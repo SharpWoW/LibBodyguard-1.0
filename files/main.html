@@ -1,0 +1,456 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../luadoc.css" type="text/css" />
+	<!--meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/-->
+</head>
+
+<body>
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+<div id="main">
+
+<div id="navigation">
+
+
+<h1>LuaDoc</h1>
+<ul>
+	
+	<li><a href="../index.html">Index</a></li>
+	
+</ul>
+
+
+<!-- Module list -->
+
+
+
+<!-- File list -->
+
+<h1>Files</h1>
+<ul>
+
+	<li><strong>main.lua</strong></li>
+	
+</ul>
+
+
+
+
+
+
+</div> <!-- id="navigation" -->
+
+<div id="content">
+
+<h1>File <code>main.lua</code></h1>
+
+
+
+
+
+
+
+<h2>Functions</h2>
+<table class="function_list">
+
+	<tr>
+	<td class="name" nowrap><a href="#lib:Exists">lib:Exists</a>&nbsp;()</td>
+	<td class="summary">Gets a value indicating whether or not a bodyguard exists (is assigned to barracks).</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#lib:GetGUID">lib:GetGUID</a>&nbsp;()</td>
+	<td class="summary">Gets the last known GUID of the bodyguard.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#lib:GetHealth">lib:GetHealth</a>&nbsp;()</td>
+	<td class="summary">Gets the bodyguard's health.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#lib:GetInfo">lib:GetInfo</a>&nbsp;()</td>
+	<td class="summary">Gets a read-only copy of the bodyguard table.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#lib:GetLevel">lib:GetLevel</a>&nbsp;()</td>
+	<td class="summary">Gets the level of the bodyguard.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#lib:GetMaxHealth">lib:GetMaxHealth</a>&nbsp;()</td>
+	<td class="summary">Gets the maximum health of the bodyguard.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#lib:GetName">lib:GetName</a>&nbsp;()</td>
+	<td class="summary">Gets the name of the bodyguard.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#lib:GetStatus">lib:GetStatus</a>&nbsp;()</td>
+	<td class="summary">Gets the last known status of the bodyguard.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#lib:IsAlive">lib:IsAlive</a>&nbsp;()</td>
+	<td class="summary">Gets a value indicating whether the bodyguard is alive.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#lib:RegisterCallback">lib:RegisterCallback</a>&nbsp;(cb_type, cb_func)</td>
+	<td class="summary">Registers a function for a specific callback type.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#lib:UnregisterCallback">lib:UnregisterCallback</a>&nbsp;(cb_type, cb_func)</td>
+	<td class="summary">Unregisters a function from a specific callback type.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#lib:UpdateFromBuilding">lib:UpdateFromBuilding</a>&nbsp;()</td>
+	<td class="summary">Updates bodyguard data from garrison building API.</td>
+	</tr>
+
+</table>
+
+
+
+
+<h2>Tables</h2>
+<table class="table_list">
+
+	<tr>
+	<td class="name" nowrap><a href="#lib.Status">lib.Status</a></td>
+	<td class="summary">Bodyguard status values.</td>
+	</tr>
+
+</table>
+
+
+
+<br/>
+<br/>
+
+
+
+
+<h2><a name="functions"></a>Functions</h2>
+<dl class="function">
+
+
+
+<dt><a name="lib:Exists"></a><strong>lib:Exists</strong>&nbsp;()</dt>
+<dd>
+Gets a value indicating whether or not a bodyguard exists (is assigned to barracks).
+
+
+
+
+
+
+
+<h3>Return value:</h3>
+<ul>Boolean indicating whether a bodyguard is assigned to the barracks.</ul>
+
+
+
+</dd>
+
+
+
+
+<dt><a name="lib:GetGUID"></a><strong>lib:GetGUID</strong>&nbsp;()</dt>
+<dd>
+Gets the last known GUID of the bodyguard. NOTE: This is not 100% reliable, GUID may change.
+
+
+
+
+
+
+
+<h3>Return value:</h3>
+<ul>The last known GUID string of the bodyguard.</ul>
+
+
+
+</dd>
+
+
+
+
+<dt><a name="lib:GetHealth"></a><strong>lib:GetHealth</strong>&nbsp;()</dt>
+<dd>
+Gets the bodyguard's health. The value returned should be fairly accurate.
+
+
+
+
+
+
+
+<h3>Return value:</h3>
+<ul>Current (predicted) health of the player's bodyguard.</ul>
+
+
+
+</dd>
+
+
+
+
+<dt><a name="lib:GetInfo"></a><strong>lib:GetInfo</strong>&nbsp;()</dt>
+<dd>
+Gets a read-only copy of the bodyguard table.
+
+
+
+
+
+
+
+<h3>Return value:</h3>
+<ul>A read-only table that maps its index to the bodyguard table in the library.</ul>
+
+
+
+</dd>
+
+
+
+
+<dt><a name="lib:GetLevel"></a><strong>lib:GetLevel</strong>&nbsp;()</dt>
+<dd>
+Gets the level of the bodyguard.
+
+
+
+
+
+
+
+<h3>Return value:</h3>
+<ul>The bodyguard's level (follower level).</ul>
+
+
+
+</dd>
+
+
+
+
+<dt><a name="lib:GetMaxHealth"></a><strong>lib:GetMaxHealth</strong>&nbsp;()</dt>
+<dd>
+Gets the maximum health of the bodyguard.
+
+
+
+
+
+
+
+<h3>Return value:</h3>
+<ul>The bodyguard's maximum health.</ul>
+
+
+
+</dd>
+
+
+
+
+<dt><a name="lib:GetName"></a><strong>lib:GetName</strong>&nbsp;()</dt>
+<dd>
+Gets the name of the bodyguard.
+
+
+
+
+
+
+
+<h3>Return value:</h3>
+<ul>The bodyguard's name (follower name).</ul>
+
+
+
+</dd>
+
+
+
+
+<dt><a name="lib:GetStatus"></a><strong>lib:GetStatus</strong>&nbsp;()</dt>
+<dd>
+Gets the last known status of the bodyguard. This can be any of the values defined in the lib.Status table Inactive: Bodyguard is not currently with the player. Active: Bodyguard is with the player. Unknown: Bodyguard status is not known or uncertain (this includes death). As with the GUID method, the bodyguard status is quite unreliable at this time.
+
+
+
+
+
+
+
+<h3>Return value:</h3>
+<ul>The last known status of the bodyguard.</ul>
+
+
+
+</dd>
+
+
+
+
+<dt><a name="lib:IsAlive"></a><strong>lib:IsAlive</strong>&nbsp;()</dt>
+<dd>
+Gets a value indicating whether the bodyguard is alive.
+
+
+
+
+
+
+
+<h3>Return value:</h3>
+<ul>A boolean value indicating whether the bodyguard is currently alive.</ul>
+
+
+
+</dd>
+
+
+
+
+<dt><a name="lib:RegisterCallback"></a><strong>lib:RegisterCallback</strong>&nbsp;(cb_type, cb_func)</dt>
+<dd>
+Registers a function for a specific callback type. This can be used to listen for certain events like health updates from the library. Currently, the following callbacks are available: guid, name, health, level, status. <ul> <li>guid args: guid</li> <li>name args: name</li> <li>health args: health, max health</li> <li>level args: level</li> <li>status args: status</li> </ul> The first argument will always be a reference to the library table.
+
+
+<h3>Parameters:</h3>
+<ul>
+	
+	<li>
+	  <code><em>cb_type</em></code>: Callback type to listen for.
+	</li>
+	
+	<li>
+	  <code><em>cb_func</em></code>: Function to call.
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="lib:UnregisterCallback"></a><strong>lib:UnregisterCallback</strong>&nbsp;(cb_type, cb_func)</dt>
+<dd>
+Unregisters a function from a specific callback type.
+
+
+<h3>Parameters:</h3>
+<ul>
+	
+	<li>
+	  <code><em>cb_type</em></code>: Callback type to unregister from.
+	</li>
+	
+	<li>
+	  <code><em>cb_func</em></code>: The function to unregister (has to be the exact same function that was passed to the Register method).
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="lib:UpdateFromBuilding"></a><strong>lib:UpdateFromBuilding</strong>&nbsp;()</dt>
+<dd>
+Updates bodyguard data from garrison building API. This is reliable and will always populate the bodyguard table with accurate information. Information available from garrison API is bodyguard name and level.
+
+
+
+
+
+
+
+
+
+</dd>
+
+
+</dl>
+
+
+
+
+<h2><a name="tables"></a>Tables</h2>
+<dl class="table">
+
+<dt><a name="lib.Status"></a><strong>lib.Status</strong></dt>
+<dd>Bodyguard status values.<br /><br />
+
+
+<h3>Fields:</h3>
+<ul>
+	
+	<li>
+	  <code><em>Inactive</em></code>: Bodyguard is not with the player (stationed at barracks).
+	</li>
+	
+	<li>
+	  <code><em>Active</em></code>: Bodyguard is with the player.
+	</li>
+	
+	<li>
+	  <code><em>Unknown</em></code>: Status of bodyguard is unknown (this includes death).
+	</li>
+	
+</ul>
+
+
+</dd>
+
+
+</dl>
+
+
+
+
+</div> <!-- id="content" -->
+
+</div> <!-- id="main" -->
+
+<div id="about">
+	<p><a href="http://validator.w3.org/check?uri=referer"><img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0!" height="31" width="88" /></a></p>
+</div> <!-- id="about" -->
+
+</div> <!-- id="container" -->	
+</body>
+</html>

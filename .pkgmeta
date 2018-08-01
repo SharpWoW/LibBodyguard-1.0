@@ -1,9 +1,0 @@
-package-as: LibBodyguard-1.0
-
-ignore:
-  - LibBodyguard-1.0.sublime-project
-
-externals:
-  LibStub:
-    url: svn://svn.wowace.com/wow/libstub/mainline/trunk
-    tag: latest
